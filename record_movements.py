@@ -10,7 +10,9 @@ robot = HAL("192.168.42.1")
 
 
 # positions = robot.servo.get_positions()
-input("hit Enter when ready to start moving")
+suffix = input("Enter a filename for this movement:")
+filename = 'movements' + suffix + '.json'
+
 robot.servo.disable_movement()
 robot.servo.set_position(16, 45)
 # robot.servo.disable_movement()
@@ -30,16 +32,16 @@ while time.time() - start_time < 10:
     movements.append(positions)
     time.sleep(0.05)
 
-with open('movements.json', 'w') as o:
+with open(filename, 'w') as o:
     o.write(json.dumps(movements, indent=2))
 
-input("hit Enter to start moving")
-with open('movements.json', 'r') as r:
-    movements = json.loads(r.read())
-
-for key in movements:
-    for servo in key:
-        robot.servo.set_position(servo[0], servo[1]) #, .05)
-    time.sleep(0.01)
-
-robot.servo.set_torque_enable([(i, False) for i in range(1, 17)])
+# input("hit Enter to start moving")
+# with open(filename, 'r') as r:
+#     movements = json.loads(r.read())
+#
+# for key in movements:
+#     for servo in key:
+#         robot.servo.set_position(servo[0], servo[1]) #, .05)
+#     time.sleep(0.01)
+#
+# robot.servo.set_torque_enable([(i, False) for i in range(1, 17)])
