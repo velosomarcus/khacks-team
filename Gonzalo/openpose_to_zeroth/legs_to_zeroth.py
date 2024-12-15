@@ -7,6 +7,34 @@ from openlch.hal import HAL
 # Initialize robot connection
 robot = HAL("192.168.42.1")
 
+#First stand up
+
+robot.servo.disable_movement()
+
+# robot.servo.enable_movement()
+robot.servo.set_positions([[i, 0] for i in range(1, 16)])
+
+robot.servo.set_position(4, -40)
+robot.servo.set_position(9, 40)
+
+robot.servo.set_position(2, 15)
+robot.servo.set_position(7, -15)
+
+robot.servo.set_position(3, -10)
+robot.servo.set_position(8, 10)
+
+robot.servo.set_position(1, 10)
+robot.servo.set_position(6, 5)
+
+robot.servo.set_position(5, -15)
+robot.servo.set_position(10, 15)
+
+robot.servo.set_position(15, 45)
+robot.servo.set_position(12, -45)
+
+robot.servo.set_position(11, -45)
+robot.servo.set_position(16, 45)
+
 # Initialize MediaPipe Pose
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=False)
@@ -14,18 +42,14 @@ mp_drawing = mp.solutions.drawing_utils
 
 # Servo ID mapping
 SERVO_MAPPING = {
-    'right_elbow': 11,
-    'right_shoulder': 12,
-    'left_shoulder': 15,
-    'left_elbow': 16
+    'right_hip_yaw': 4,
+    'right_knee': 2
 }
 
 # Angle adjustment parameters for each servo
 SERVO_ADJUSTMENTS = {
-    'right_shoulder': {'offset': 0, 'scale': 1.0},  # Invert and shift by 90 degrees
-    'right_elbow': {'offset': 0, 'scale': 1.0},      # Scale by 0.8 and shift by 45 degrees
-    'left_shoulder': {'offset': 0, 'scale': 1.0},   # Scale by 1.2 and shift by -30 degrees
-    'left_elbow': {'offset': 0, 'scale': 1.0}         # No adjustment
+    'right_hip_yaw': {'offset': -45, 'scale': 1.0},
+    'right_knee': {'offset': 45, 'scale': -1.0}
 }
 
 # Add these constants after the SERVO_MAPPING
@@ -48,10 +72,16 @@ BODY_CONNECTIONS = frozenset([
     (24, 26), (26, 28)   # Right leg
 ])
 
-# Open video file
-cap = cv2.VideoCapture('dance.mp4')
+# # Open video file
+# cap = cv2.VideoCapture('dance.mp4')
+# if not cap.isOpened():
+#     print("Error: Could not open video file.")
+#     exit()
+
+# # Open webcam with error checking
+cap = cv2.VideoCapture(3)
 if not cap.isOpened():
-    print("Error: Could not open video file.")
+    print("Error: Could not open camera.")
     exit()
 
 def calculate_angle_to_vertical(a, b):
@@ -76,6 +106,12 @@ def map_angle_to_servo(angle, joint_type):
     if joint_type in SERVO_ADJUSTMENTS:
         adjusted_angle = (adjusted_angle * SERVO_ADJUSTMENTS[joint_type]['scale'] + 
                          SERVO_ADJUSTMENTS[joint_type]['offset'])
+    
+    # Add safety limits
+    if joint_type == 'right_hip_pitch':
+        adjusted_angle = np.clip(adjusted_angle, -45, 45)
+    elif joint_type == 'right_knee':
+        adjusted_angle = np.clip(adjusted_angle, -90, 0)
     
     return adjusted_angle
 
@@ -119,37 +155,31 @@ while cap.isOpened():
             end_point = (int(end_landmark.x * w), int(end_landmark.y * h))
             cv2.line(frame, start_point, end_point, (0, 255, 0), 2)
 
-        # Get points and calculate angles (keep your existing code)
-        left_shoulder = [landmarks[11].x * w, landmarks[11].y * h]
-        right_shoulder = [landmarks[12].x * w, landmarks[12].y * h]
-        left_elbow = [landmarks[13].x * w, landmarks[13].y * h]
-        right_elbow = [landmarks[14].x * w, landmarks[14].y * h]
-        left_wrist = [landmarks[15].x * w, landmarks[15].y * h]
-        right_wrist = [landmarks[16].x * w, landmarks[16].y * h]
+        # Get right leg points
+        right_hip = [landmarks[24].x * w, landmarks[24].y * h]
+        right_knee = [landmarks[26].x * w, landmarks[26].y * h]
+        right_ankle = [landmarks[28].x * w, landmarks[28].y * h]
 
         # Calculate angles
-        left_bicep_angle = calculate_angle_to_vertical(left_shoulder, left_elbow)
-        right_bicep_angle = calculate_angle_to_vertical(right_shoulder, right_elbow)
-        left_forearm_angle = calculate_angle_to_vertical(left_elbow, left_wrist)
-        right_forearm_angle = calculate_angle_to_vertical(right_elbow, right_wrist)
+        right_thigh_angle = calculate_angle_to_vertical(right_hip, right_knee)
+        right_shin_angle = calculate_angle_to_vertical(right_knee, right_ankle)
 
         # Draw angle labels
-        draw_angle_label(frame, left_shoulder, left_bicep_angle, "left_bicep_angle")
-        draw_angle_label(frame, right_shoulder, right_bicep_angle, "right_bicep_angle")
-        draw_angle_label(frame, left_elbow, left_forearm_angle, "left_forearm_angle")
-        draw_angle_label(frame, right_elbow, right_forearm_angle, "right_forearm_angle")
+        draw_angle_label(frame, right_hip, right_thigh_angle, "right_hip_angle")
+        draw_angle_label(frame, right_knee, right_shin_angle, "right_knee_angle")
 
-        # Your existing robot control code...
+        # Map angles to servo positions and send commands
         try:
-            right_shoulder_angle = map_angle_to_servo(right_bicep_angle, 'right_shoulder')
-            right_elbow_angle = map_angle_to_servo(right_forearm_angle, 'right_elbow')
-            robot.servo.set_position(SERVO_MAPPING['right_shoulder'], right_shoulder_angle)
-            robot.servo.set_position(SERVO_MAPPING['right_elbow'], right_elbow_angle)
-
-            left_shoulder_angle = map_angle_to_servo(left_bicep_angle, 'left_shoulder')
-            left_elbow_angle = map_angle_to_servo(left_forearm_angle, 'left_elbow')
-            robot.servo.set_position(SERVO_MAPPING['left_shoulder'], left_shoulder_angle)
-            robot.servo.set_position(SERVO_MAPPING['left_elbow'], left_elbow_angle)
+            right_hip_yaw = map_angle_to_servo(right_thigh_angle, 'right_hip_yaw')
+            right_knee_angle = map_angle_to_servo(right_shin_angle, 'right_knee')
+            
+            # Print servo IDs and angles
+            print(f"Servo ID {SERVO_MAPPING['right_hip_yaw']} (right_hip_yaw): {right_hip_yaw:.2f} degrees")
+            print(f"Servo ID {SERVO_MAPPING['right_knee']} (right_knee): {right_knee_angle:.2f} degrees")
+            
+            # Send commands to robot
+            robot.servo.set_position(SERVO_MAPPING['right_hip_yaw'], right_hip_yaw)
+            robot.servo.set_position(SERVO_MAPPING['right_knee'], right_knee_angle)
 
         except Exception as e:
             print(f"Error sending commands to robot: {e}")

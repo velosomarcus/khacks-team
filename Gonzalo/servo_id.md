@@ -18,3 +18,6 @@
 16. **Servo ID 16:** Left Elbow Yaw  
 
 This list maps Servo IDs to their respective motor functions as labeled in the motor diagram of Zeroth-01.
+
+#For servo 12, -50 is horizontal, 40 touches the hip
+#For servo 11, 0 is flat, goes -90 to 90
