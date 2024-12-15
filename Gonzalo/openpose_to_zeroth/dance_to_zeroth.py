@@ -20,6 +20,14 @@ SERVO_MAPPING = {
     'left_elbow': 16
 }
 
+# Angle adjustment parameters for each servo
+SERVO_ADJUSTMENTS = {
+    'right_shoulder': {'offset': 0, 'scale': 1.0},  # Invert and shift by 90 degrees
+    'right_elbow': {'offset': 0, 'scale': 1.0},      # Scale by 0.8 and shift by 45 degrees
+    'left_shoulder': {'offset': 0, 'scale': 1.0},   # Scale by 1.2 and shift by -30 degrees
+    'left_elbow': {'offset': 0, 'scale': 1.0}         # No adjustment
+}
+
 # Add these constants after the SERVO_MAPPING
 BODY_LANDMARKS = [
     11, 12,  # shoulders
@@ -60,16 +68,16 @@ def calculate_angle_to_vertical(a, b):
 
 def map_angle_to_servo(angle, joint_type):
     """
-    Map the calculated angle to the servo's range
-    You might need to adjust these mappings based on your robot's specifications
+    Map the calculated angle to the servo's range using offset and scale adjustments
     """
-    if joint_type in ['right_shoulder', 'left_shoulder']:
-        # Map shoulder angles (you might need to adjust these values)
-        return angle - 180  # This is a simple mapping, adjust as needed
-    elif joint_type in ['right_elbow', 'left_elbow']:
-        # Map elbow angles (you might need to adjust these values)
-        return angle - 180  # This is a simple mapping, adjust as needed
-    return angle
+    adjusted_angle = (angle - 180)  # Basic mapping as before
+    
+    # Apply adjustments
+    if joint_type in SERVO_ADJUSTMENTS:
+        adjusted_angle = (adjusted_angle * SERVO_ADJUSTMENTS[joint_type]['scale'] + 
+                         SERVO_ADJUSTMENTS[joint_type]['offset'])
+    
+    return adjusted_angle
 
 def draw_angle_label(frame, joint_point, angle, joint_name=""):
     """
