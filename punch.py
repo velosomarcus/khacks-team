@@ -2,9 +2,17 @@ import os
 import sys
 import json
 import time
+import random
 
 from openlch.hal import HAL
 
+
+if len(sys.argv) < 2:
+    print("Usage: python punch.py time-fighting")
+    sys.exit(1)
+
+# Get the parameter (first argument after the script name)
+time_fighting = int(sys.argv[1])
 
 robot = HAL("192.168.42.1")
 
@@ -72,15 +80,15 @@ def punch(arm):
     if arm == 'right':
         set_servo_position(12, 45)
         set_servo_position(11, -10)
-        time.sleep(0.5)
+        time.sleep(0.4)
         set_servo_position(12, -45)
         set_servo_position(11, -90)
     elif arm == 'left':
         set_servo_position(15, -45)
         set_servo_position(16, 10)
-        time.sleep(0.5)
+        time.sleep(0.4)
         set_servo_position(15, 45)
-        set_servo_position(14, 90)
+        set_servo_position(16, 90)
 
     time.sleep(0.3)
 
@@ -102,16 +110,31 @@ prepare_to_punch('left')
 # set_servo_position(13, -90)
 #time.sleep(0.5)
 
-# punch
-punch('right')
-# punch
-punch('right')
-# punch
-punch('left')
+
+start_time = time.time()
+while time.time() - start_time < time_fighting:
+    side = random.randint(1, 10)
+    if 1 <= side <= 5:
+        punch('right')
+    else:
+        punch('left')
+
+
+
+
+
+# # punch
+# punch('right')
+# # punch
+# punch('right')
+# # punch
+# punch('left')
 
 # guard pose
 guard_pose('right')
 guard_pose('left')
+
+
 
 # stand pose
 # set_servo_position(11, 0)
