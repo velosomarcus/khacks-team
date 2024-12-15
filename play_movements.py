@@ -10,7 +10,7 @@ robot = HAL("192.168.42.1")
 
 filename = input("Enter the movement filename:")
 
-filename = '/Users/mveloso/Pycharm/klabs/khacks-team/' + (filename or "movements_up_down.json")
+filename = os.path.join(os.path.dirname(__file__), (filename or "movements_up_down.json"))
 
 
 # if os.path.isfile(filename):
