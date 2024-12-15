@@ -46,10 +46,13 @@ SERVO_MAPPING = {
     'right_knee': 2
 }
 
+#Servo ID to 0 is straight, 90 is backwards, -90 is forward
+
+
 # Angle adjustment parameters for each servo
 SERVO_ADJUSTMENTS = {
     'right_hip_yaw': {'offset': -45, 'scale': 1.0},
-    'right_knee': {'offset': 45, 'scale': -1.0}
+    'right_knee': {'offset': 0, 'scale': 1.0}
 }
 
 # Add these constants after the SERVO_MAPPING
