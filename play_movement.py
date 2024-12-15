@@ -8,10 +8,6 @@ from openlch.hal import HAL
 
 robot = HAL("192.168.42.1")
 
-# filename = input("Enter the movement filename: ")
-#
-# full_file_path = os.path.join(os.getcwd(), (filename or "movements_up_down.json"))
-
 if len(sys.argv) < 2:
     print("Usage: python script.py <file-name>")
     sys.exit(1)
@@ -20,12 +16,10 @@ if len(sys.argv) < 2:
 parameter = sys.argv[1]
 
 full_file_path = os.path.join(os.getcwd(), parameter)
-print(full_file_path)
 
 if not os.path.isfile(full_file_path):
     print("File", full_file_path, "not found")
     sys.exit(0)
-
 
 robot.servo.set_torque_enable([i, False] for i in range(1, 17))
 robot.servo.set_torque([i, 50] for i in range(1,17))
