@@ -24,7 +24,8 @@ robot.servo.set_torque_enable([(i, False) for i in range(1, 17)])
 input("hit Enter when ready to start recording the movements")
 
 start_time = time.time()
-while time.time() - start_time < 10:
+while time.time() - start_time < 12:
+#while True:
     # Get current positions of all servos
     positions = robot.servo.get_positions()
     # ID, position, velocity [(1, 0, 0), (2, -50, 0), (3, 5, 20)...]
