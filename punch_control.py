@@ -17,17 +17,26 @@ def stand_up():
 
     robot.servo.set_positions([[i, 0] for i in range(1, 16)])
 
-    robot.servo.set_position(4, -42)
-    robot.servo.set_position(9, 42)
+    robot.servo.set_position(4, -40)
+    robot.servo.set_position(9, 40)
 
-    robot.servo.set_position(2, 83)
-    robot.servo.set_position(7, -83)
+    robot.servo.set_position(2, 15)
+    robot.servo.set_position(7, -15)
 
-    robot.servo.set_position(1, 57)
-    robot.servo.set_position(6, -45)
+    robot.servo.set_position(3, -10)
+    robot.servo.set_position(8, 10)
 
-    robot.servo.set_position(5, -31)
-    robot.servo.set_position(10, 31)
+    robot.servo.set_position(1, 15)
+    robot.servo.set_position(6, -15)
+
+    robot.servo.set_position(5, -10)
+    robot.servo.set_position(10, 10)
+
+    robot.servo.set_position(15, 20)
+    robot.servo.set_position(12, -20)
+
+    robot.servo.set_position(11, -45)
+    robot.servo.set_position(16, 45)
 
 #####
 # {'1': 57, '2': 82, '3': 0, '4': -42, '5': -31, '6': -57, '7': -83, '8': 0, '9': 42, '10': 31, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0}
@@ -94,7 +103,7 @@ def leftpunch():
 def right_uppercut():
     set_servo_position(12, 40)
     set_servo_position(11, -10)
-    set_servo_position(13, 0)
+    set_servo_position(13, -30)
     time.sleep(const_speed)
     set_servo_position(12, 40)
     set_servo_position(11, -10)
@@ -104,7 +113,7 @@ def right_uppercut():
 def left_uppercut():
     set_servo_position(15, -40)
     set_servo_position(16, 10)
-    set_servo_position(14, 0)
+    set_servo_position(14, 30)
     time.sleep(const_speed)
     set_servo_position(15, -40)
     set_servo_position(16, 10)
