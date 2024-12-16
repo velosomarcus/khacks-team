@@ -292,5 +292,8 @@ while cap.isOpened():
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
 
+
+time.sleep(0.01)
+
 cap.release()
 cv2.destroyAllWindows()

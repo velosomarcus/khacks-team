@@ -25,7 +25,7 @@ def stand_up():
     robot.servo.set_positions([[i, 0] for i in range(1, 16)])
 
     robot.servo.set_position(4, -42)
-    robot.servo.s\et_position(9, 42)
+    robot.servo.set_position(9, 42)
 
     robot.servo.set_position(2, 83)
     robot.servo.set_position(7, -83)

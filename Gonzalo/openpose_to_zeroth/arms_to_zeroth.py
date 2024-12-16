@@ -24,7 +24,7 @@ robot.servo.set_position(3, -10)
 robot.servo.set_position(8, 10)
 
 robot.servo.set_position(1, 10)
-robot.servo.set_position(6, 5)
+robot.servo.set_position(6, -8)
 
 robot.servo.set_position(5, -15)
 robot.servo.set_position(10, 15)
