@@ -44,11 +44,13 @@ robot.servo.set_position(7, -15)
 
 #Servo ID to 0 is straight, 90 is backwards, -90 is forward
 
-
 robot.servo.set_position(3, -10)
 robot.servo.set_position(8, 10)
 
-robot.servo.set_position(1, 15)
+robot.servo.set_position(1, 90)
+
+#Servo ID 1 to 0 is flat, -90 is tips pointed forward, 90 is inwards.
+
 robot.servo.set_position(6, 0)
 
 robot.servo.set_position(5, -15)
