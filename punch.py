@@ -31,7 +31,7 @@ def stand_up():
     robot.servo.set_position(7, -83)
 
     robot.servo.set_position(1, 57)
-    robot.servo.set_position(6, -57)
+    robot.servo.set_position(6, -45)  # -57)
 
     robot.servo.set_position(5, -31)
     robot.servo.set_position(10, 31)

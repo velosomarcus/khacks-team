@@ -39,6 +39,8 @@ while time.time() - start_time < 12:
 with open(filename, 'w') as o:
     o.write(json.dumps(movements, indent=2))
 
+print('Result:/n','Filename:', filename, 'Records:', len(movements))
+
 # input("hit Enter to start moving")
 # with open(filename, 'r') as r:
 #     movements = json.loads(r.read())
